@@ -1,10 +1,10 @@
-Drop table IF EXISTS Concerner;
-Drop table IF EXISTS Vente;
-Drop table IF EXISTS BD;
-Drop table IF EXISTS Serie;
-Drop table IF EXISTS Auteur;
-Drop table IF EXISTS Editeur;
-Drop table IF EXISTS Client;
+Drop table IF EXISTS Concerner CASCADE;
+Drop table IF EXISTS Vente CASCADE;
+Drop table IF EXISTS BD CASCADE;
+Drop table IF EXISTS Serie CASCADE;
+Drop table IF EXISTS Auteur CASCADE;
+Drop table IF EXISTS Editeur CASCADE;
+Drop table IF EXISTS Client CASCADE;
 
 Create table Client (
 	numClient    serial primary key,
