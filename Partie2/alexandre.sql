@@ -6,7 +6,6 @@
 
 
 /* Question A : Ecrire une procédure qui prend en paramètre un numéro d’auteur dessinateur et qui renvoie pour chaque titre de BD de l’auteur, le nombre d’exemplaires vendus de cette BD. */
-
 /*
 DROP FUNCTION proc_a(numAutDes BD.numAuteurDessinateur%TYPE);
 DROP TYPE TypeAuteur cascade;
@@ -33,11 +32,22 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-Select * From proc_a(6); FONCTIONNE
+Select * From proc_a(6);
+*/
+
+/* Resultat */
+/*
+            titre            | nbvente 
+-----------------------------+---------
+ La Fille de Vercingétorix   |     657
+ Astérix et le Griffon       |     567
+ Astérix chez les Pictes     |     358
+ Astérix et la Transitalique |     357
+ Le papyrus de César         |      57
+(5 lignes)
 */
 
 /* Question B : Écrire une fonction qui prend en paramètre le nom d’une série de BD et qui renvoie pour chaque titre de la série le nombre d’exemplaires vendus et le chiffre d’affaire réalisé par titre.*/
-
 /*
 DROP TYPE TypeSerie cascade;
 DROP FUNCTION proc_b(nomSerie Serie.nomSerie%TYPE);
@@ -66,7 +76,20 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-Select * From proc_b('Peter Pan'); FONCTIONNE*/
+Select * From proc_b('Peter Pan');
+*/
+/* Resultat */
+/*
+    titre     | nbvente | chaffai 
+--------------+---------+---------
+ Crochet      |     780 |   10920
+ Destins      |     406 |    5684
+ Londres      |     245 |    3430
+ Mains rouges |     456 |    6384
+ Opikanoba    |    1345 |   18830
+ Tempête      |     745 |   10430
+(6 lignes)
+*/
 
 /* Question C : Écrire une procédure qui prend en paramètre un nom d’éditeur et un nom d’auteur dessinateur et un nom d’auteur scénariste, et qui renvoie la liste des BD de ces auteurs éditées par l’éditeur choisi. Si l’éditeur n’a pas édité de BD de ces auteurs, ou qu’il n’existe pas de BD de ces deux auteurs, on devra générer le message suivant « l’éditeur % n’a pas édité de BD des auteurs % et %» où on remplacera les « % » par les noms correspondants. */
 
@@ -106,11 +129,11 @@ FOR tuple IN
 END
 $$ LANGUAGE plpgsql;
 
-Select * From proc_c('Delcourt', 'Plessix', 'Plessix'); PAS FONCTIONNEL */
+Select * From proc_c('Delcourt', 'Plessix', 'Plessix'); */
 
 
 /* Question D : Créer une procédure stockée qui prend en paramètre le nom d’une série de BD et qui renvoie les clients ayants acheté tous les albums de la série (utiliser des boucles FOR et/ou des curseurs). Si aucun client ne répond à la requête alors on affichera un message d’avertissement ‘Aucun client n’a acheté tous les exemplaires de la série %’, en complétant le ‘ %’ par le nom de la série. */
-
+/*
 DROP FUNCTION proc_d(nom Serie.nomSerie%TYPE);
 DROP TYPE TypeClient cascade;
 
@@ -164,11 +187,11 @@ From   Client
 END
 $$ LANGUAGE plpgsql;
 
-Select Distinct * From proc_d('Dans un recoin de ce monde');
+Select Distinct * From proc_d('Dans un recoin de ce monde'); */
 
 /* Question E : Créer une procédure qui prend en paramètre un nombre nbBD de BD et une année donnée, et qui renvoie la liste des éditeurs ayant vendu au moins ce nombre de BD dans l’année en question. Si aucun éditeur ne répond à la requête, le signaler par un message approprié. */
-/*
 
+/*
 DROP FUNCTION proc_e(nbBD int, annee timestamp);
 
 CREATE OR REPLACE FUNCTION proc_e(nbBD int, annee int)
@@ -178,7 +201,7 @@ DECLARE
     un_type    Editeur%ROWTYPE;
     un_editeur Editeur.numEditeur%TYPE;
 BEGIN
-    FOR    numEditeur IN
+    FOR    un_editeur IN
     Select numEditeur
     From   Editeur
     
@@ -187,7 +210,7 @@ BEGIN
         INTO     un_type
         From     Editeur E Natural Join Serie S 
                  Natural Join BD B Natural Join 
-                 Concerner Natural Join Vente V 
+                 Concerner C Natural Join Vente V 
         Group By E.numEditeur, S.numSerie, B.isbn, C.isbn, C.numVente, V.numVente
         Having   V.numVente >= nbBD AND
                  EXTRACT(YEAR From dteVente) = annee;
@@ -202,6 +225,13 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-Select Distinct * From proc_e(55, 2014); */
-
+Select Distinct * From proc_e(0, 2012);
+*/
+/* Resultat */
+/*
+ numediteur | nomediteur |                adresseediteur                | numtelediteur  |           mailediteur            
+------------+------------+----------------------------------------------+----------------+----------------------------------
+          1 | Delcourt   | 8     rue Leon Jouhaux,         75010  Paris | 01 56 03 92 20 | accueil-paris@groupedelcourt.com
+(1 ligne)
+*/
 
